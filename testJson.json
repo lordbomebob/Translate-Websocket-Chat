@@ -1,0 +1,5 @@
+{
+    "action": "sendMessage",
+    "message": "Hello, how are you?",
+    "targetLang": "fr"
+}
