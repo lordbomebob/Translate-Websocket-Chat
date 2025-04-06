@@ -1,5 +1,12 @@
-{
-    "action": "sendMessage",
-    "message": "Hello, how are you?",
-    "targetLang": "fr"
-}
+[
+    {
+        "action": "sendMessage",
+        "message": "Hello, how are you?",
+        "senderLang": "en"
+    },
+    {
+        "action": "chat_init",
+        "lang": "en",
+        "username":"Frack"
+    }
+]
