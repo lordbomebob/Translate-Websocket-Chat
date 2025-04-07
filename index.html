@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Chat</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+    input { padding: 10px; width: 80%; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Simple WebSocket Chat</h1>
+  <div id="messages"></div>
+  <input id="messageInput" placeholder="Type a message..." />
+  
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const user = prompt("Please enter your name") || "Anonymous";
+    const userLanguage = prompt("Please enter your language (Currently only support en, fr, es)") || "en";
+    const ws = new WebSocket(`wss://websocket`);
+    const messagesDiv = document.getElementById('messages');
+    const input = document.getElementById('messageInput');
+  
+    ws.onopen = () => {
+    const initMessage = {
+      action: "chat_init",
+      lang: userLanguage,
+      username: user
+    };
+    ws.send(JSON.stringify(initMessage));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        const msg = document.createElement('div');
+        msg.textContent = `Sender:${data.sender} [${data.originLang}]: ${data.original}\nTranslated:${data.translated}`;
+        messagesDiv.appendChild(msg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (err) {
+        console.error('Invalid JSON from server:', event.data);
+      }
+    };
+  
+    function sendMessage() {
+      if (input.value.trim()) {
+        const messageObject = {
+        action: "sendMessage",
+        message: input.value.trim(),
+        senderLang: userLanguage
+        };
+        ws.send(JSON.stringify(messageObject));
+        input.value = '';
+      }
+    }
+  
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
